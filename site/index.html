@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TheHireHub Status — Is TheHireHub down? Live uptime for thehirehub.ai</title>
+<meta name="description" content="Live system status for TheHireHub.ai: website, hiring platform, API and media uptime, response times and incident history. Checked every 5 minutes from outside our network.">
+<link rel="canonical" href="https://status.thehirehub.ai/">
+<link rel="icon" href="/favicon.png" type="image/png">
+<link rel="alternate" type="application/rss+xml" title="TheHireHub incidents" href="https://github.com/TheHireHub/thh-status/issues.atom?labels=status">
+<meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="TheHireHub">
+<meta property="og:title" content="TheHireHub Status — live uptime for thehirehub.ai">
+<meta property="og:description" content="Real-time status of the TheHireHub website, platform, API and media, with 90-day uptime and incident history.">
+<meta property="og:url" content="https://status.thehirehub.ai/">
+<meta property="og:image" content="https://www.thehirehub.ai/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="TheHireHub Status">
+<meta name="twitter:description" content="Live uptime and incident history for thehirehub.ai.">
+<meta name="twitter:image" content="https://www.thehirehub.ai/og-image.png">
+<meta name="theme-color" content="#2b7bd3">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://www.thehirehub.ai/#organization",
+      "name": "TheHireHub.AI",
+      "url": "https://www.thehirehub.ai",
+      "logo": "https://www.thehirehub.ai/icons/logo.svg",
+      "sameAs": ["https://github.com/TheHireHub"]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://status.thehirehub.ai/#website",
+      "url": "https://status.thehirehub.ai/",
+      "name": "TheHireHub Status",
+      "publisher": {"@id": "https://www.thehirehub.ai/#organization"},
+      "inLanguage": "en"
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://status.thehirehub.ai/#webpage",
+      "url": "https://status.thehirehub.ai/",
+      "name": "TheHireHub Status — live uptime for thehirehub.ai",
+      "description": "Live system status for TheHireHub.ai: website, platform, API and media uptime, response times and incident history.",
+      "isPartOf": {"@id": "https://status.thehirehub.ai/#website"},
+      "about": {"@id": "https://www.thehirehub.ai/#organization"},
+      "inLanguage": "en"
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Is TheHireHub down right now?",
+          "acceptedAnswer": {"@type": "Answer", "text": "This page shows the live status of TheHireHub's website, hiring platform, API and media. If everything is operational you will see a green banner at the top. Any outage or degraded service appears here within five minutes, along with an incident entry."}
+        },
+        {
+          "@type": "Question",
+          "name": "How often is TheHireHub's status checked?",
+          "acceptedAnswer": {"@type": "Answer", "text": "Every service is checked every 5 minutes from outside our own network, so this page keeps working even if our main infrastructure is unavailable."}
+        },
+        {
+          "@type": "Question",
+          "name": "How do I report a problem with TheHireHub?",
+          "acceptedAnswer": {"@type": "Answer", "text": "If something looks wrong and no incident is listed, contact us at https://www.thehirehub.ai/contact and we will investigate."}
+        }
+      ]
+    }
+  ]
+}
+</script>
+<style>
+  :root{
+    --brand-500:#2b7bd3; --brand-600:#0a62c0; --brand-deep:#0a396d; --brand-tint:#e8f4fd;
+    --ink:#142743; --ink-muted:#4d5e77; --ink-subtle:#94a3b8;
+    --paper:#fafaf7; --white:#ffffff; --rule:#e5e7eb;
+    --ok:#22c55e; --ok-tint:#f0fdf4; --ok-text:#15803d;
+    --warn:#f59e0b; --warn-tint:#fffbeb; --warn-text:#b45309;
+    --down:#ef4444; --down-tint:#fef2f2; --down-text:#b42318;
+    --font:"Manrope",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+    --shadow-receipt:0 1px 0 0 rgba(15,23,42,.04),0 12px 32px -16px rgba(15,23,42,.12);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:880px;margin:0 auto;padding-inline:20px}
+  header{position:sticky;top:0;z-index:10;background:rgba(250,250,247,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--rule)}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:68px;gap:12px}
+  .logo{display:flex;align-items:center;gap:10px}
+  .logo img{height:44px;width:auto;display:block}
+  .logo span{font-weight:700;font-size:15px;color:var(--ink-muted);padding-left:10px;border-left:1px solid var(--rule)}
+  .nav-links{display:flex;gap:6px;align-items:center}
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:999px;font-weight:600;font-size:14px;transition:.15s;white-space:nowrap}
+  .btn-outline{border:2px solid var(--brand-500);color:var(--brand-600)}
+  .btn-outline:hover{background:var(--brand-tint)}
+  .btn-ghost{color:var(--ink-muted)}.btn-ghost:hover{color:var(--ink)}
+  @media(max-width:560px){.btn-ghost{display:none}.logo span{display:none}}
+
+  main{padding-block:40px 64px;display:flex;flex-direction:column;gap:28px}
+  .banner{background:var(--white);border-radius:20px;box-shadow:var(--shadow-receipt);padding:28px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+  .banner .dot{width:52px;height:52px;border-radius:999px;background:var(--ok-tint);display:grid;place-items:center;flex:none}
+  .banner .dot i{width:18px;height:18px;border-radius:999px;background:var(--ok);box-shadow:0 0 0 6px rgba(34,197,94,.18)}
+  .banner.warn .dot{background:var(--warn-tint)}.banner.warn .dot i{background:var(--warn);box-shadow:0 0 0 6px rgba(245,158,11,.18)}
+  .banner.down .dot{background:var(--down-tint)}.banner.down .dot i{background:var(--down);box-shadow:0 0 0 6px rgba(239,68,68,.18)}
+  .banner h1{margin:0;font-size:clamp(1.5rem,1.2rem+1.4vw,2rem);line-height:1.1;letter-spacing:-.02em;font-weight:800;text-wrap:balance}
+  .banner p{margin:4px 0 0;color:var(--ink-muted);font-size:15px}
+  .banner .meta{margin-left:auto;text-align:right;font-size:13px;color:var(--ink-subtle);font-weight:500}
+  .banner .meta b{display:block;color:var(--ink);font-weight:700;font-variant-numeric:tabular-nums}
+  @media(max-width:600px){.banner .meta{margin-left:0;text-align:left;width:100%}}
+
+  .sec{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+  .sec h2{margin:0;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--brand-600);font-weight:700}
+  .sec span{font-size:13px;color:var(--ink-subtle);font-weight:500}
+  .card{background:var(--white);border:1px solid var(--rule);border-radius:16px;overflow:hidden}
+  .row{padding:18px 22px;display:grid;grid-template-columns:1fr auto;gap:8px 16px;align-items:center;border-top:1px solid var(--rule)}
+  .row:first-child{border-top:0}
+  .row .name{font-weight:700;font-size:16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .row .name small{font-weight:500;color:var(--ink-subtle);font-size:13px}
+  .state{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;padding:4px 10px;border-radius:999px;background:var(--ok-tint);color:var(--ok-text);justify-self:end}
+  .state::before{content:"";width:7px;height:7px;border-radius:999px;background:var(--ok)}
+  .state.warn{background:var(--warn-tint);color:var(--warn-text)}.state.warn::before{background:var(--warn)}
+  .state.down{background:var(--down-tint);color:var(--down-text)}.state.down::before{background:var(--down)}
+  .bars{grid-column:1/-1;display:flex;gap:3px;height:30px}
+  .bars i{flex:1;border-radius:3px;background:var(--ok);opacity:.85}
+  .bars i.w{background:var(--warn)}.bars i.d{background:var(--down)}.bars i.n{background:var(--rule)}
+  .legend{grid-column:1/-1;display:flex;justify-content:space-between;font-size:12px;color:var(--ink-subtle);font-weight:500;font-variant-numeric:tabular-nums}
+  .legend b{color:var(--ink-muted);font-weight:700}
+
+  .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+  .tile{background:var(--white);border:1px solid var(--rule);border-radius:16px;padding:16px 18px}
+  .tile .t{font-size:13px;font-weight:700;color:var(--ink-muted)}
+  .tile .v{font-size:26px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.1;margin-top:4px}
+  .tile .v small{font-size:13px;color:var(--ink-subtle);font-weight:600;letter-spacing:0}
+  .tile svg{width:100%;height:44px;margin-top:10px;display:block}
+
+  .inc{padding:18px 22px;border-top:1px solid var(--rule);display:grid;grid-template-columns:auto 1fr;gap:4px 14px}
+  .inc:first-child{border-top:0}
+  .inc .d{font-size:13px;font-weight:700;color:var(--ink-subtle);font-variant-numeric:tabular-nums;padding-top:2px;white-space:nowrap}
+  .inc h3{margin:0;font-size:15px;font-weight:700}
+  .inc h3 a:hover{color:var(--brand-600)}
+  .inc p{margin:2px 0 0;font-size:14px;color:var(--ink-muted);white-space:pre-line}
+  .tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:999px;margin-left:6px;vertical-align:middle}
+  .tag.res{background:var(--ok-tint);color:var(--ok-text)}.tag.mnt{background:var(--brand-tint);color:var(--brand-600)}.tag.open{background:var(--down-tint);color:var(--down-text)}
+  .empty{padding:22px;color:var(--ink-muted);font-size:14px}
+  @media(max-width:520px){.inc{grid-template-columns:1fr}}
+
+  .faq details{border-top:1px solid var(--rule);padding:14px 22px}
+  .faq details:first-child{border-top:0}
+  .faq summary{cursor:pointer;font-weight:700;font-size:15px;list-style:none;display:flex;justify-content:space-between;gap:12px}
+  .faq summary::-webkit-details-marker{display:none}
+  .faq summary::after{content:"+";color:var(--brand-500);font-weight:800}
+  .faq details[open] summary::after{content:"–"}
+  .faq p{margin:8px 0 0;font-size:14px;color:var(--ink-muted);max-width:65ch}
+  .faq a{color:var(--brand-600);font-weight:600}
+
+  footer{border-top:1px solid var(--rule);padding-block:24px;font-size:13px;color:var(--ink-subtle);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  footer nav a{color:var(--ink-muted);font-weight:600;margin-left:16px}
+  footer nav a:hover{color:var(--brand-600)}
+  a:focus-visible,summary:focus-visible{outline:2px solid var(--brand-500);outline-offset:2px;border-radius:6px}
+  @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn{transition:none}}
+</style>
+</head>
+<body>
+<header><div class="wrap nav">
+  <a class="logo" href="https://www.thehirehub.ai" aria-label="TheHireHub home"><img src="/logo.svg" alt="TheHireHub.AI" width="69" height="44"><span>Status</span></a>
+  <nav class="nav-links" aria-label="Page">
+    <a class="btn btn-ghost" href="#incidents">Incident history</a>
+    <a class="btn btn-outline" href="https://www.thehirehub.ai">Back to TheHireHub →</a>
+  </nav>
+</div></header>
+
+<main class="wrap">
+  <section class="banner" id="banner" aria-live="polite">
+    <div class="dot"><i></i></div>
+    <div>
+      <h1 id="headline">Checking TheHireHub services…</h1>
+      <p>Website, platform, API and media — checked every 5 minutes from outside our network.</p>
+    </div>
+    <div class="meta">Last checked<b id="last">—</b></div>
+  </section>
+
+  <section aria-labelledby="h-services">
+    <div class="sec"><h2 id="h-services">Services</h2><span>Uptime over the last 90 days</span></div>
+    <div class="card" id="services">
+      <noscript><div class="empty">Live data needs JavaScript. Raw data: <a href="/data.json">data.json</a>.</div></noscript>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-resp">
+    <div class="sec"><h2 id="h-resp">Response time</h2><span>Last 24 hours</span></div>
+    <div class="grid2" id="resp"></div>
+  </section>
+
+  <section id="incidents" aria-labelledby="h-inc">
+    <div class="sec"><h2 id="h-inc">Incident history</h2><span>Past 30 days</span></div>
+    <div class="card" id="inc-list"><div class="empty">Loading…</div></div>
+  </section>
+
+  <section aria-labelledby="h-faq">
+    <div class="sec"><h2 id="h-faq">About this page</h2></div>
+    <div class="card faq">
+      <details><summary>Is TheHireHub down right now?</summary><p>The banner at the top of this page is the answer. Green means every service passed its last check. Any outage or slowdown shows here within five minutes, with an incident entry below.</p></details>
+      <details><summary>How often is TheHireHub's status checked?</summary><p>Every 5 minutes, from outside our own infrastructure. This page is hosted independently of thehirehub.ai so it stays up even when our main systems don't.</p></details>
+      <details><summary>What do the services mean?</summary><p><b>Website</b> is thehirehub.ai. <b>Platform</b> is the hiring workspace you log in to. <b>API</b> powers the platform, integrations and AiRA. <b>Media</b> serves resumes, uploads and interview recordings.</p></details>
+      <details><summary>How do I report a problem?</summary><p>If something looks wrong and no incident is listed, <a href="https://www.thehirehub.ai/contact">contact us</a> and we'll investigate.</p></details>
+    </div>
+  </section>
+
+  <footer>
+    <span>© <span id="year">2026</span> TheHireHub.AI · Hosted independently of our main infrastructure</span>
+    <nav aria-label="Footer"><a href="https://github.com/TheHireHub/thh-status/issues.atom?labels=status">RSS</a><a href="https://www.thehirehub.ai/contact">Report a problem</a><a href="https://www.thehirehub.ai/privacy">Privacy</a></nav>
+  </footer>
+</main>
+
+<script>
+(async function(){
+  const $=s=>document.querySelector(s);
+  const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const fmt=(iso,o)=>new Date(iso).toLocaleString("en-IN",Object.assign({timeZone:"Asia/Kolkata"},o));
+  const DESC={website:"www.thehirehub.ai",platform:"Dashboard & hiring workspace",api:"api.thehirehub.ai",media:"Resumes, uploads, interview recordings"};
+  let data;
+  try{data=await (await fetch("/data.json",{cache:"no-store"})).json();}
+  catch(e){$("#headline").textContent="Status data unavailable";$("#services").innerHTML='<div class="empty">Could not load data.json.</div>';return;}
+  $("#year").textContent=new Date().getFullYear();
+  const sites=data.sites||[];
+  const label=s=>s.status==="up"?["","Operational"]:s.status==="degraded"?["warn","Degraded"]:["down","Outage"];
+
+  // banner
+  const down=sites.filter(s=>s.status==="down").length, deg=sites.filter(s=>s.status==="degraded").length;
+  const b=$("#banner");
+  if(down){b.classList.add("down");$("#headline").textContent=down===sites.length?"Major outage":`${down} service${down>1?"s":""} down`;}
+  else if(deg){b.classList.add("warn");$("#headline").textContent="Degraded performance";}
+  else{$("#headline").textContent=sites.length?"All systems operational":"No data yet";}
+  document.title=($("#headline").textContent)+" — TheHireHub Status";
+  $("#last").textContent=data.generatedAt?fmt(data.generatedAt,{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"})+" IST":"—";
+
+  // services
+  $("#services").innerHTML=sites.map(s=>{const [cls,txt]=label(s);return `
+    <div class="row">
+      <div class="name">${esc(s.name)} <small>${esc(DESC[s.slug]||s.url)}</small></div>
+      <span class="state ${cls}">${txt}</span>
+      <div class="bars" role="img" aria-label="${esc(s.name)} daily status, last 90 days">${(s.days||[]).map(d=>{
+        const c=d.down===null?"n":d.down===0?"":d.down<60?"w":"d";
+        const t=d.down===null?"Not monitored":d.down===0?"No downtime":`${d.down} min down`;
+        return `<i class="${c}" title="${d.date}: ${t}"></i>`;}).join("")}</div>
+      <div class="legend"><span>90 days ago</span><b>${esc(s.uptime90)}% uptime</b><span>Today</span></div>
+    </div>`;}).join("")||'<div class="empty">First checks are running. Data appears within a few minutes.</div>';
+
+  // response time
+  $("#resp").innerHTML=sites.map(s=>{
+    const pts=(s.spark||[]).filter(n=>typeof n==="number"&&n>0);
+    const avg=s.timeDay||(pts.length?Math.round(pts.reduce((a,c)=>a+c,0)/pts.length):0);
+    const W=220,H=44;let svg="";
+    if(pts.length>1){const max=Math.max(...pts)*1.15;
+      const P=pts.map((p,i)=>[(i/(pts.length-1)*W).toFixed(1),(H-p/max*H).toFixed(1)]);
+      const path=P.map((p,i)=>`${i?"L":"M"}${p[0]},${p[1]}`).join(" ");
+      svg=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">
+        <path d="${path} L${W},${H} L0,${H} Z" fill="#2b7bd3" opacity=".08"/>
+        <path d="${path}" fill="none" stroke="#2b7bd3" stroke-width="1.5"/>
+        <circle cx="${P[P.length-1][0]}" cy="${P[P.length-1][1]}" r="2.5" fill="#2b7bd3"/></svg>`;}
+    return `<div class="tile"><div class="t">${esc(s.name)}</div><div class="v">${avg}<small> ms</small></div>${svg}</div>`;}).join("");
+
+  // incidents
+  const inc=(data.incidents||[]).sort((a,b)=>b.createdAt.localeCompare(a.createdAt));
+  $("#inc-list").innerHTML=(inc.map(i=>{
+    const mnt=i.labels.includes("maintenance");
+    const tag=i.state==="open"?'<span class="tag open">Investigating</span>':mnt?'<span class="tag mnt">Maintenance</span>':'<span class="tag res">Resolved</span>';
+    const body=(i.body||"").replace(/<!--[\s\S]*?-->/g,"").replace(/^#+\s*/gm,"").replace(/\*\*/g,"").trim().slice(0,400);
+    return `<div class="inc"><div class="d">${fmt(i.createdAt,{day:"2-digit",month:"short",year:"numeric"})}</div>
+      <div><h3><a href="${esc(i.url)}" rel="noopener">${esc(i.title)}</a>${tag}</h3>${body?`<p>${esc(body)}</p>`:""}</div></div>`;}).join(""))
+    +`<div class="empty">${inc.length?"No other incidents in this period.":"No incidents in the past 30 days."}</div>`;
+})();
+</script>
+</body>
+</html>

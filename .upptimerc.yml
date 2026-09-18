@@ -1,31 +1,55 @@
-# Change these first
-owner: upptime # Your GitHub organization or username, where this repository lives
-repo: upptime # The name of this repository
+# TheHireHub status monitor — https://status.thehirehub.ai
+# Monitoring engine: Upptime (GitHub Actions). The public page is our own
+# static site in ./site, deployed by .github/workflows/pages.yml and fed by
+# history/summary.json + GitHub issues labelled "status".
+owner: TheHireHub
+repo: thh-status
+user-agent: TheHireHub
 
 sites:
-  - name: Google
-    url: https://www.google.com
-  - name: Wikipedia
-    url: https://en.wikipedia.org
-  - name: Hacker News
-    url: https://news.ycombinator.com
-  - name: Secret Site
-    url: $SECRET_SITE
+  - name: Website
+    url: https://www.thehirehub.ai
+    expectedStatusCodes: [200]
+  - name: Platform
+    url: https://www.thehirehub.ai/dashboard
+    expectedStatusCodes: [200]
+  - name: API
+    url: https://api.thehirehub.ai/health
+    expectedStatusCodes: [200]
+  - name: Media
+    url: https://media.thehirehub.ai/thh-demo-2min-web.mp4
+    method: HEAD
+    expectedStatusCodes: [200]
 
+# Upptime's own Svelte site is not used; Pages is served from ./site via
+# pages.yml. Kept minimal so the generator has what it needs.
 status-website:
-  # Add your custom domain name, or remove the `cname` line if you don't have a domain
-  # Uncomment the `baseUrl` line if you don't have a custom domain and add your repo name there
-  cname: demo.upptime.js.org
-  # baseUrl: /your-repo-name
-  logoUrl: https://raw.githubusercontent.com/upptime/upptime.js.org/master/static/img/icon.svg
-  name: Upptime
-  introTitle: "**Upptime** is the open-source uptime monitor and status page, powered entirely by GitHub."
-  introMessage: This is a sample status page which uses **real-time** data from our [GitHub repository](https://github.com/upptime/upptime). No server required — just GitHub Actions, Issues, and Pages. [**Get your own for free**](https://github.com/upptime/upptime)
+  cname: status.thehirehub.ai
+  logoUrl: https://www.thehirehub.ai/icons/logo.svg
+  name: TheHireHub Status
+  introTitle: "**TheHireHub** system status"
+  introMessage: Live status of thehirehub.ai — website, platform, API and media.
   navbar:
     - title: Status
       href: /
-    - title: GitHub
-      href: https://github.com/$OWNER/$REPO
+    - title: TheHireHub
+      href: https://www.thehirehub.ai
 
-# Upptime also supports notifications, assigning issues, and more
-# See https://upptime.js.org/docs/configuration
+# Don't spam the repo with commits when nothing changed.
+commitMessages:
+  commitAuthorName: TheHireHub Status Bot
+  commitAuthorEmail: status@thehirehub.ai
+
+# Site build runs on its own schedule in pages.yml; slow Upptime's Svelte site
+# build to once a day so it never contends with ours.
+workflowSchedule:
+  uptime: "*/5 * * * *"
+  responseTime: "0 23 * * *"
+  staticSite: "0 1 * * *"
+  summary: "0 0 * * *"
+  graphs: "0 0 * * *"
+  updateTemplate: "0 0 * * *"
+  updates: "0 3 * * *"
+
+# Keep issues (they are our public incident log).
+skipDeleteIssues: true
