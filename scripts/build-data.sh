@@ -48,7 +48,7 @@ while IFS= read -r site; do
   fi
 
   sites_json=$(jq -c --argjson s "$site" --argjson days "$days" --argjson spark "$spark" --arg u "$uptime90" \
-    '. + [$s + {days:$days, spark:$spark, uptime90:$u} | del(.icon, .dailyMinutesDown)]' <<<"$sites_json")
+    '. + [$s + {days:$days, spark:$spark, uptime90:$u} | del(.icon, .url, .dailyMinutesDown)]' <<<"$sites_json")
 done < <(jq -c '.[]' history/summary.json)
 
 # --- incidents: GitHub issues labelled "status", last 30 days ---------------

@@ -225,7 +225,7 @@
   const $=s=>document.querySelector(s);
   const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   const fmt=(iso,o)=>new Date(iso).toLocaleString("en-IN",Object.assign({timeZone:"Asia/Kolkata"},o));
-  const DESC={website:"www.thehirehub.ai",platform:"Dashboard & hiring workspace",api:"api.thehirehub.ai",media:"Resumes, uploads, interview recordings"};
+  const DESC={website:"thehirehub.ai",platform:"Dashboard & hiring workspace",api:"Platform services & integrations",media:"Resumes, uploads, interview recordings"};
   let data;
   try{data=await (await fetch("/data.json",{cache:"no-store"})).json();}
   catch(e){$("#headline").textContent="Status data unavailable";$("#services").innerHTML='<div class="empty">Could not load data.json.</div>';return;}
@@ -245,7 +245,7 @@
   // services
   $("#services").innerHTML=sites.map(s=>{const [cls,txt]=label(s);return `
     <div class="row">
-      <div class="name">${esc(s.name)} <small>${esc(DESC[s.slug]||s.url)}</small></div>
+      <div class="name">${esc(s.name)} <small>${esc(DESC[s.slug]||"")}</small></div>
       <span class="state ${cls}">${txt}</span>
       <div class="bars" role="img" aria-label="${esc(s.name)} daily status, last 90 days">${(s.days||[]).map(d=>{
         const c=d.down===null?"n":d.down===0?"":d.down<60?"w":"d";
