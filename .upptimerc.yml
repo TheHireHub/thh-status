@@ -40,16 +40,9 @@ commitMessages:
   commitAuthorName: TheHireHub Status Bot
   commitAuthorEmail: status@thehirehub.ai
 
-# Site build runs on its own schedule in pages.yml; slow Upptime's Svelte site
-# build to once a day so it never contends with ours.
-workflowSchedule:
-  uptime: "*/5 * * * *"
-  responseTime: "0 23 * * *"
-  staticSite: "0 1 * * *"
-  summary: "0 0 * * *"
-  graphs: "0 0 * * *"
-  updateTemplate: "0 0 * * *"
-  updates: "0 3 * * *"
+# Workflows are pinned to Upptime v1.44.0 and committed by hand (no
+# GH_PAT, so the template updater is not run). Edit .github/workflows/*.yml
+# directly to change schedules.
 
 # Keep issues (they are our public incident log).
 skipDeleteIssues: true
