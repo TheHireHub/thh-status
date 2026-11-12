@@ -17,17 +17,24 @@
 name: Summary CI
 on:
   schedule:
-    - cron: "0 0 * * *"
+    # AUDIT-DECISION(AUD-STAT-b460cf8f): :17 is off uptime's */5 grid, so the shared -upptime group never queues both
+    # in the same minute (a newly queued run cancels the pending one); shared group kept so history/ pushes never race.
+    - cron: "17 0 * * *"
   repository_dispatch:
     types: [summary]
   workflow_dispatch:
 concurrency:
   group: ${{ github.repository }}-${{ github.head_ref || github.ref_name }}-upptime
   cancel-in-progress: false
+# AUDIT-DECISION(AUD-STAT-0a3095fe): github.token may only commit README/summary.json (+ read issues); 10 min timeout.
+permissions:
+  contents: write
+  issues: read
 jobs:
   release:
     name: Generate README
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     env:
       GH_APP_PRIVATE_KEY: ${{ secrets.GH_APP_PRIVATE_KEY }}
     steps:

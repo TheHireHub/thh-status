@@ -182,7 +182,7 @@
     <div class="dot"><i></i></div>
     <div>
       <h1 id="headline">Checking TheHireHub services…</h1>
-      <p>Website, platform, API and media — checked every 5 minutes from outside our network.</p>
+      <p id="sub">Website, platform, API and media — checked every 5 minutes from outside our network.</p>
     </div>
     <div class="meta">Last checked<b id="last">—</b></div>
   </section>
@@ -209,7 +209,7 @@
     <div class="card faq">
       <details><summary>Is TheHireHub down right now?</summary><p>The banner at the top of this page is the answer. Green means every service passed its last check. Any outage or slowdown shows here within five minutes, with an incident entry below.</p></details>
       <details><summary>How often is TheHireHub's status checked?</summary><p>Every 5 minutes, from outside our own infrastructure. This page is hosted independently of thehirehub.ai so it stays up even when our main systems don't.</p></details>
-      <details><summary>What do the services mean?</summary><p><b>Website</b> is thehirehub.ai. <b>Platform</b> is the hiring workspace you log in to. <b>API</b> powers the platform, integrations and AiRA. <b>Media</b> serves resumes, uploads and interview recordings.</p></details>
+      <details><summary>What do the services mean?</summary><p><b>Website</b> is thehirehub.ai. <b>Platform</b> is the hiring workspace you log in to. <b>API</b> powers the platform, integrations and AiRA. <b>Media</b> is our file and video delivery network.</p></details>
       <details><summary>How do I report a problem?</summary><p>If something looks wrong and no incident is listed, <a href="https://www.thehirehub.ai/contact">contact us</a> and we'll investigate.</p></details>
     </div>
   </section>
@@ -225,7 +225,8 @@
   const $=s=>document.querySelector(s);
   const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   const fmt=(iso,o)=>new Date(iso).toLocaleString("en-IN",Object.assign({timeZone:"Asia/Kolkata"},o));
-  const DESC={website:"thehirehub.ai",platform:"Dashboard & hiring workspace",api:"Platform services & integrations",media:"Resumes, uploads, interview recordings"};
+  // AUDIT-DECISION(AUD-STAT-c7777842): Media copy matches the check (one public CDN file), no resume/recording claim.
+  const DESC={website:"thehirehub.ai",platform:"Dashboard & hiring workspace",api:"Platform services & integrations",media:"File & video delivery"};
   let data;
   try{data=await (await fetch("/data.json",{cache:"no-store"})).json();}
   catch(e){$("#headline").textContent="Status data unavailable";$("#services").innerHTML='<div class="empty">Could not load data.json.</div>';return;}
@@ -235,12 +236,18 @@
 
   // banner
   const down=sites.filter(s=>s.status==="down").length, deg=sites.filter(s=>s.status==="degraded").length;
+  // AUDIT-DECISION(AUD-STAT-a3346cb0): 'Last checked' = last successful probe run (checkedAt), build time only as fallback;
+  // older than 30 min (5-min checks + GitHub cron delays) = monitoring or deploys stalled, so never show green.
+  const STALE_MS=30*60*1000, checked=data.checkedAt||data.generatedAt;
+  const stale=sites.length>0&&!(Date.now()-Date.parse(checked)<=STALE_MS);
   const b=$("#banner");
   if(down){b.classList.add("down");$("#headline").textContent=down===sites.length?"Major outage":`${down} service${down>1?"s":""} down`;}
   else if(deg){b.classList.add("warn");$("#headline").textContent="Degraded performance";}
+  else if(stale){b.classList.add("warn");$("#headline").textContent="Monitoring delayed";}
   else{$("#headline").textContent=sites.length?"All systems operational":"No data yet";}
+  if(stale)$("#sub").textContent="Our last check was more than 30 minutes ago, so this page may not show the current status.";
   document.title=($("#headline").textContent)+" — TheHireHub Status";
-  $("#last").textContent=data.generatedAt?fmt(data.generatedAt,{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"})+" IST":"—";
+  $("#last").textContent=checked?fmt(checked,{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"})+" IST":"—";
 
   // services
   $("#services").innerHTML=sites.map(s=>{const [cls,txt]=label(s);return `
@@ -270,13 +277,15 @@
 
   // incidents
   const inc=(data.incidents||[]).sort((a,b)=>b.createdAt.localeCompare(a.createdAt));
+  // AUDIT-DECISION(AUD-STAT-2e65099a): when the issue fetch failed (incidentsError), say so instead of claiming a clean 30 days.
+  const incNote=data.incidentsError?(inc.length?"Some incident history could not be loaded, so this list may be incomplete.":"Incident history is temporarily unavailable."):inc.length?"No other incidents in this period.":"No incidents in the past 30 days.";
   $("#inc-list").innerHTML=(inc.map(i=>{
     const mnt=i.labels.includes("maintenance");
     const tag=i.state==="open"?'<span class="tag open">Investigating</span>':mnt?'<span class="tag mnt">Maintenance</span>':'<span class="tag res">Resolved</span>';
     const body=(i.body||"").replace(/<!--[\s\S]*?-->/g,"").replace(/^#+\s*/gm,"").replace(/\*\*/g,"").trim().slice(0,400);
     return `<div class="inc"><div class="d">${fmt(i.createdAt,{day:"2-digit",month:"short",year:"numeric"})}</div>
       <div><h3><a href="${esc(i.url)}" rel="noopener">${esc(i.title)}</a>${tag}</h3>${body?`<p>${esc(body)}</p>`:""}</div></div>`;}).join(""))
-    +`<div class="empty">${inc.length?"No other incidents in this period.":"No incidents in the past 30 days."}</div>`;
+    +`<div class="empty">${incNote}</div>`;
 })();
 </script>
 </body>

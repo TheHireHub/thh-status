@@ -14,9 +14,12 @@ sites:
     url: https://www.thehirehub.ai/dashboard
     expectedStatusCodes: [200]
   - name: API
-    url: https://api.thehirehub.ai/health
+    # AUDIT-DECISION(AUD-STAT-c7777842): probe the DB-ping readiness route, not static /health.
+    # Deploy the backend /health/ready route (W7-3055) before this, else API reads as down.
+    url: https://api.thehirehub.ai/health/ready
     expectedStatusCodes: [200]
   - name: Media
+    # AUDIT-DECISION(AUD-STAT-c7777842): public CDN file only; page copy says file & video delivery, not resumes.
     url: https://media.thehirehub.ai/thh-demo-2min-web.mp4
     method: HEAD
     expectedStatusCodes: [200]

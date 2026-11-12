@@ -14,20 +14,29 @@
 # * More by Anand Chowdhary: https://anandchowdhary.com
 
 
+# AUDIT-DECISION(AUD-STAT-f2644a69): kept, not dead: its daily history/<slug>.yml commits are the only
+# responseTime samples behind build-data.sh's 24h sparkline and summary.json timeDay on the live page.
 name: Response Time CI
 on:
   schedule:
-    - cron: "0 23 * * *"
+    # AUDIT-DECISION(AUD-STAT-b460cf8f): :37 is off uptime's */5 grid (same-minute queue cancelled one run daily);
+    # still lands before summary at 00:17 so the day's responseTime samples are in that summary.
+    - cron: "37 23 * * *"
   repository_dispatch:
     types: [response_time]
   workflow_dispatch:
 concurrency:
   group: ${{ github.repository }}-${{ github.head_ref || github.ref_name }}-upptime
   cancel-in-progress: false
+# AUDIT-DECISION(AUD-STAT-0a3095fe): github.token may only commit history/ (+ read issues); 10 min timeout.
+permissions:
+  contents: write
+  issues: read
 jobs:
   release:
     name: Check status
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     env:
       GH_APP_PRIVATE_KEY: ${{ secrets.GH_APP_PRIVATE_KEY }}
     steps:
