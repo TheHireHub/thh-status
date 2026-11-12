@@ -72,7 +72,11 @@ fetch_issues() { gh api --paginate "repos/$REPO/issues?labels=status&per_page=10
 incidents_error=false
 raw=""
 for query in "state=open" "state=closed&since=$since"; do
-  if chunk=$(fetch_issues "$query"); then raw+="$chunk"$'\n'
+  if chunk=$(fetch_issues "$query"); then
+    raw+="$chunk"$'\n'
+    # AUDIT-DECISION(AUD-STAT-ed33e2c3): log the per-query count across all pages, not a page-size warning
+    # (with --paginate a full page is no cut). Undo: drop this echo.
+    echo "incident fetch ($query): $(grep -c . <<<"$chunk" || true) issues across all pages"
   else incidents_error=true; echo "::warning::incident fetch failed ($query); data.json gets incidentsError=true"; fi
 done
 # AUDIT-DECISION(AUD-STAT-734b53bd): strip URLs (and the empty "()" they leave) from title and body, finishing ed4c04d's

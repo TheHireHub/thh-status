@@ -2,7 +2,8 @@
 # Offline test for scripts/build-data.sh: checkedAt (the probe clock behind the status page's
 # "Last checked") comes from the last successful uptime.yml run, and a gh failure never fails the build;
 # fractional dailyMinutesDown never aborts the build; incidents follow open state / closed_at, not updated_at;
-# a failed issue fetch publishes incidentsError=true; URLs never reach incident text; history/<slug>.yml status wins.
+# a failed issue fetch publishes incidentsError=true; URLs never reach incident text; history/<slug>.yml status wins;
+# every page of the paginated issue fetch reaches data.json.
 # Runs in a throwaway copy with a stubbed gh, so no network and no change to site/data.json here.
 # Needs GNU date like build-data.sh itself (on macOS: brew install coreutils, gdate is used).
 # Usage: bash scripts/test-build-data.sh
@@ -33,7 +34,9 @@ case "$*" in
     cat "$FIXTURES/open.jsonl" 2>/dev/null || true ;;
   *issues*state=closed*)
     case "${STUB_ISSUES_FAIL:-}" in all|closed) echo "HTTP 502: Bad Gateway" >&2; exit 1 ;; esac
-    cat "$FIXTURES/closed.jsonl" 2>/dev/null || true ;;
+    cat "$FIXTURES/closed.jsonl" 2>/dev/null || true
+    # Page 2 reaches only a caller that asked for every page.
+    case " $* " in *" --paginate "*) cat "$FIXTURES/closed.page2.jsonl" 2>/dev/null || true ;; esac ;;
   *) echo "unexpected gh call: $*" >&2; exit 1 ;;
 esac
 EOF
@@ -115,6 +118,20 @@ build STUB_RUN_AT=2026-11-12T10:05:31Z
 check "no URL in incident title or body" 'all(.incidents[]; (.title + .body) | test("http|media-host") | not)'
 check "incident text otherwise kept" 'any(.incidents[]; .body | test("Media  was \\*\\*down"))'
 check "public issue link kept" 'any(.incidents[]; .url == "https://example.test/i/9")'
+
+# --- pagination: a flapping burst of 100 closed issues on page 1 + 20 on page 2 all reach data.json
+flaps() { # <first n> <last n + 1>: closed status issues, created and resolved 3 days ago
+  jq -cn --arg c "$(ago 3)" --argjson from "$1" --argjson to "$2" 'range($from; $to)
+    | {title: "Flap \(.)", html_url: "https://example.test/f/\(.)", state: "closed", created_at: $c,
+       updated_at: $c, closed_at: $c, labels: [{name: "status"}], body: null}'
+}
+: > "$tmp/open.jsonl"
+flaps 1 101 > "$tmp/closed.jsonl"
+flaps 101 121 > "$tmp/closed.page2.jsonl"
+build STUB_RUN_AT=2026-11-12T10:05:31Z
+check "two pages (100 + 20) -> 120 incidents" '.incidents | length == 120'
+check "last issue of page 2 is kept" 'any(.incidents[]; .url == "https://example.test/f/120")'
+rm -f "$tmp/closed.page2.jsonl"
 
 # --- live status: history/<slug>.yml beats summary.json (needs a git repo for the response-time scan)
 git -C "$tmp/repo" init -q
