@@ -209,7 +209,7 @@
     <div class="card faq">
       <details><summary>Is TheHireHub down right now?</summary><p>The banner at the top of this page is the answer. Green means every service passed its last check. Any outage or slowdown shows here within five minutes, with an incident entry below.</p></details>
       <details><summary>How often is TheHireHub's status checked?</summary><p>Every 5 minutes, from outside our own infrastructure. This page is hosted independently of thehirehub.ai so it stays up even when our main systems don't.</p></details>
-      <details><summary>What do the services mean?</summary><p><b>Website</b> is thehirehub.ai. <b>Platform</b> is the hiring workspace you log in to. <b>API</b> powers the platform, integrations and AiRA. <b>Media</b> serves resumes, uploads and interview recordings.</p></details>
+      <details><summary>What do the services mean?</summary><p><b>Website</b> is thehirehub.ai. <b>Platform</b> is the hiring workspace you log in to. <b>API</b> powers the platform, integrations and AiRA. <b>Media</b> is our file and video delivery network.</p></details>
       <details><summary>How do I report a problem?</summary><p>If something looks wrong and no incident is listed, <a href="https://www.thehirehub.ai/contact">contact us</a> and we'll investigate.</p></details>
     </div>
   </section>
@@ -225,7 +225,8 @@
   const $=s=>document.querySelector(s);
   const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   const fmt=(iso,o)=>new Date(iso).toLocaleString("en-IN",Object.assign({timeZone:"Asia/Kolkata"},o));
-  const DESC={website:"thehirehub.ai",platform:"Dashboard & hiring workspace",api:"Platform services & integrations",media:"Resumes, uploads, interview recordings"};
+  // AUDIT-DECISION(AUD-STAT-c7777842): Media copy matches the check (one public CDN file), no resume/recording claim.
+  const DESC={website:"thehirehub.ai",platform:"Dashboard & hiring workspace",api:"Platform services & integrations",media:"File & video delivery"};
   let data;
   try{data=await (await fetch("/data.json",{cache:"no-store"})).json();}
   catch(e){$("#headline").textContent="Status data unavailable";$("#services").innerHTML='<div class="empty">Could not load data.json.</div>';return;}
