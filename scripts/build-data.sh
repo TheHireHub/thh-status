@@ -29,7 +29,9 @@ while IFS= read -r site; do
     if (( d_ts + 86400 < start_ts )); then
       days=$(jq -c --arg d "$d" '. + [{date:$d, down:null}]' <<<"$days")
     else
-      m=$(jq -r --arg d "$d" '.dailyMinutesDown[$d] // 0' <<<"$site")
+      # AUDIT-DECISION(AUD-STAT-2c7ed1bb): coerce in jq so bash $(( )) only sees an integer; round, not floor,
+      # so a sub-minute outage still shows as 1 min down. Non-numeric values count as 0.
+      m=$(jq -r --arg d "$d" '(.dailyMinutesDown[$d] // 0) | (tonumber? // 0) | round' <<<"$site")
       down_total=$((down_total + m)); days_counted=$((days_counted + 1))
       days=$(jq -c --arg d "$d" --argjson m "$m" '. + [{date:$d, down:$m}]' <<<"$days")
     fi
@@ -52,13 +54,21 @@ while IFS= read -r site; do
     '. + [$s + {days:$days, spark:$spark, uptime90:$u} | del(.icon, .url, .dailyMinutesDown)]' <<<"$sites_json")
 done < <(jq -c '.[]' history/summary.json)
 
-# --- incidents: GitHub issues labelled "status", last 30 days ---------------
+# --- incidents: GitHub issues labelled "status": all open + closed in last 30 days
+# GitHub's `since` filters on updated_at, so it would drop an open incident nobody touched for 30 days
+# and re-list an old one somebody edited. Open issues are fetched without it; closed ones are kept by
+# closed_at (fallback created_at). --paginate prints one issue per line across every page.
 since=$(date -u -d "@$((NOW - 30*86400))" +%FT%TZ)
-incidents=$(gh api "repos/$REPO/issues?labels=status&state=all&since=$since&per_page=50" \
-  --jq '[.[] | select(.pull_request == null) | {
+fetch_issues() { gh api --paginate "repos/$REPO/issues?labels=status&per_page=100&$1" --jq '.[]'; }
+# AUDIT-DECISION(AUD-STAT-75580a59): either fetch failing still gives an empty list, as before (pipefail
+# makes the `||` fallback win); the visible error state for that case is AUD-STAT-2e65099a's change.
+incidents=$({ fetch_issues "state=open" && fetch_issues "state=closed&since=$since"; } 2>/dev/null \
+  | jq -cs --arg since "$since" '[.[] | select(.pull_request == null)
+      | select(.state == "open" or ((.closed_at // .created_at) >= $since))]
+    | unique_by(.html_url) | map({
       title, url: .html_url, state, createdAt: .created_at, closedAt: .closed_at,
       labels: [.labels[].name], body: (.body // "")
-    }]' 2>/dev/null || echo '[]')
+    })') || incidents='[]'
 
 # --- probe clock: when uptime.yml last finished a successful check ----------
 # AUDIT-DECISION(AUD-STAT-a3346cb0): history/<slug>.yml lastUpdated only moves on status/response changes, so it is no
