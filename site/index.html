@@ -277,13 +277,15 @@
 
   // incidents
   const inc=(data.incidents||[]).sort((a,b)=>b.createdAt.localeCompare(a.createdAt));
+  // AUDIT-DECISION(AUD-STAT-2e65099a): when the issue fetch failed (incidentsError), say so instead of claiming a clean 30 days.
+  const incNote=data.incidentsError?(inc.length?"Some incident history could not be loaded, so this list may be incomplete.":"Incident history is temporarily unavailable."):inc.length?"No other incidents in this period.":"No incidents in the past 30 days.";
   $("#inc-list").innerHTML=(inc.map(i=>{
     const mnt=i.labels.includes("maintenance");
     const tag=i.state==="open"?'<span class="tag open">Investigating</span>':mnt?'<span class="tag mnt">Maintenance</span>':'<span class="tag res">Resolved</span>';
     const body=(i.body||"").replace(/<!--[\s\S]*?-->/g,"").replace(/^#+\s*/gm,"").replace(/\*\*/g,"").trim().slice(0,400);
     return `<div class="inc"><div class="d">${fmt(i.createdAt,{day:"2-digit",month:"short",year:"numeric"})}</div>
       <div><h3><a href="${esc(i.url)}" rel="noopener">${esc(i.title)}</a>${tag}</h3>${body?`<p>${esc(body)}</p>`:""}</div></div>`;}).join(""))
-    +`<div class="empty">${inc.length?"No other incidents in this period.":"No incidents in the past 30 days."}</div>`;
+    +`<div class="empty">${incNote}</div>`;
 })();
 </script>
 </body>

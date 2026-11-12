@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Offline test for scripts/build-data.sh: checkedAt (the probe clock behind the status page's
 # "Last checked") comes from the last successful uptime.yml run, and a gh failure never fails the build;
-# fractional dailyMinutesDown never aborts the build; incidents follow open state / closed_at, not updated_at.
+# fractional dailyMinutesDown never aborts the build; incidents follow open state / closed_at, not updated_at;
+# a failed issue fetch publishes incidentsError=true; URLs never reach incident text; history/<slug>.yml status wins.
 # Runs in a throwaway copy with a stubbed gh, so no network and no change to site/data.json here.
 # Needs GNU date like build-data.sh itself (on macOS: brew install coreutils, gdate is used).
 # Usage: bash scripts/test-build-data.sh
@@ -26,8 +27,13 @@ case "$*" in
     if [ "${STUB_RUNS_FAIL:-}" = 1 ]; then echo "HTTP 403: Resource not accessible" >&2; exit 1; fi
     printf '%s\n' "${STUB_RUN_AT:-}" ;;
   # --paginate --jq '.[]' prints one issue per line; fixtures exist only for the incident cases.
-  *issues*state=open*) cat "$FIXTURES/open.jsonl" 2>/dev/null || true ;;
-  *issues*state=closed*) cat "$FIXTURES/closed.jsonl" 2>/dev/null || true ;;
+  # STUB_ISSUES_FAIL=all fails both issue fetches, =closed only the closed one.
+  *issues*state=open*)
+    if [ "${STUB_ISSUES_FAIL:-}" = all ]; then echo "HTTP 502: Bad Gateway" >&2; exit 1; fi
+    cat "$FIXTURES/open.jsonl" 2>/dev/null || true ;;
+  *issues*state=closed*)
+    case "${STUB_ISSUES_FAIL:-}" in all|closed) echo "HTTP 502: Bad Gateway" >&2; exit 1 ;; esac
+    cat "$FIXTURES/closed.jsonl" 2>/dev/null || true ;;
   *) echo "unexpected gh call: $*" >&2; exit 1 ;;
 esac
 EOF
@@ -89,5 +95,36 @@ check "closed incident resolved in window is kept" 'any(.incidents[]; .title == 
 check "old incident edited yesterday stays out" 'all(.incidents[]; .title != "Old resolved, edited yesterday")'
 check "pull requests are not incidents" 'all(.incidents[]; .title != "A pull request")'
 check "exactly two incidents" '.incidents | length == 2'
+check "fetch ok -> incidentsError false" '.incidentsError == false'
+
+# --- issue fetch failures: build still publishes, with incidentsError
+if build STUB_RUN_AT=2026-11-12T10:05:31Z STUB_ISSUES_FAIL=all; then echo "ok   gh issue failure -> build exits 0"
+else echo "FAIL gh issue failure made build-data.sh exit non-zero"; fail=1; fi
+check "both fetches fail -> incidentsError true, no incidents" '.incidentsError == true and .incidents == []'
+check "both fetches fail -> service status still published" '.sites | length == 2'
+build STUB_RUN_AT=2026-11-12T10:05:31Z STUB_ISSUES_FAIL=closed
+check "closed fetch fails -> open incident kept, incidentsError true" \
+  '.incidentsError == true and [.incidents[].title] == ["Open long outage"]'
+
+# --- monitor URLs never reach incident title/body
+jq -cn --arg c "$(ago 1)" '{title: "Media down (https://media-host.example/x)", html_url: "https://example.test/i/9",
+  state: "open", created_at: $c, updated_at: $c, closed_at: null, labels: [{name: "status"}],
+  body: "In [`abc1234`](https://example.test/c/abc1234), Media (https://media-host.example/x) was **down**:\n- HTTP code: 0"}' \
+  > "$tmp/open.jsonl"
+build STUB_RUN_AT=2026-11-12T10:05:31Z
+check "no URL in incident title or body" 'all(.incidents[]; (.title + .body) | test("http|media-host") | not)'
+check "incident text otherwise kept" 'any(.incidents[]; .body | test("Media  was \\*\\*down"))'
+check "public issue link kept" 'any(.incidents[]; .url == "https://example.test/i/9")'
+
+# --- live status: history/<slug>.yml beats summary.json (needs a git repo for the response-time scan)
+git -C "$tmp/repo" init -q
+git -C "$tmp/repo" -c user.name=test -c user.email=test@example.test -c commit.gpgsign=false \
+  commit -q --allow-empty -m init
+printf 'url: https://api-host.example/health\nstatus: down\ncode: 0\nstartTime: %s\n' "$(ago 2)" \
+  > "$tmp/repo/history/api.yml"
+printf 'status: maybe\nstartTime: %s\n' "$(ago 2)" > "$tmp/repo/history/website.yml"
+build STUB_RUN_AT=2026-11-12T10:05:31Z
+check "summary up + history down -> api status down" '.sites[1].status == "down"'
+check "unknown history status keeps summary status" '.sites[0].status == "up"'
 
 exit "$fail"
