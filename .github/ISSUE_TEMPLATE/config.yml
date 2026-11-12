@@ -1,8 +1,6 @@
-blank_issues_enabled: true
+# AUDIT-DECISION(AUD-STAT-2499a7ca): blank issues off; send people to THH's own contact page, not Upptime's public forum.
+blank_issues_enabled: false
 contact_links:
-  - name: Feature requests and ideas
-    url: https://github.com/orgs/upptime/discussions/new?category=ideas
-    about: Suggest an idea for this project
-  - name: Questions
-    url: https://github.com/orgs/upptime/discussions/new?category=q-a
-    about: Please ask and answer questions here
+  - name: Report a problem with TheHireHub
+    url: https://www.thehirehub.ai/contact
+    about: Account, candidate or billing problems go here, never in a public issue

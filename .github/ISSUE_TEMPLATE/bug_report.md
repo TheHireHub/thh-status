@@ -1,40 +1,30 @@
 ---
-name: Bug report
-about: Create a report to help us improve
+name: Status page problem
+about: Report something wrong with the TheHireHub status page or its monitors
 title: ''
 labels: 'bug'
-assignees: 'AnandChowdhary'
-
+assignees: ''
+# AUDIT-DECISION(AUD-STAT-2499a7ca): rewritten for THH; upstream Upptime assignee and Discussions link removed.
 ---
 
-<!-- If you have a question, you should use Discussions instead: https://github.com/orgs/upptime/discussions -->
+<!--
+Issues in this repository are public. Do not include account details, candidate names, emails,
+phone numbers, resumes or anything else private. For account or candidate problems, contact us at
+https://www.thehirehub.ai/contact instead.
+-->
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+**What looks wrong**
+Which service or part of the status page (for example API or Media) and what you saw.
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+**When**
+Date, time and time zone when you noticed it.
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+**Expected behaviour**
+What you expected the status page to show.
 
 **Screenshots**
-If applicable, add screenshots to help explain your problem.
+Optional. Crop out any personal or candidate details first.
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
-
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
-
-**Additional context**
-Add any other context about the problem here.
+**Browser and device**
+ - Browser and version:
+ - Device and OS:
