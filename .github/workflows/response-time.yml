@@ -14,6 +14,8 @@
 # * More by Anand Chowdhary: https://anandchowdhary.com
 
 
+# AUDIT-DECISION(AUD-STAT-f2644a69): kept, not dead: its daily history/<slug>.yml commits are the only
+# responseTime samples behind build-data.sh's 24h sparkline and summary.json timeDay on the live page.
 name: Response Time CI
 on:
   schedule:
