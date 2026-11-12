@@ -27,9 +27,15 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+      # AUDIT-DECISION(AUD-STAT-a9f1b6bd): checkout@v6 like the other workflows (node20 runtime retiring);
+      # upload-pages-artifact/deploy-pages majors are left to the Dependabot github-actions group.
+      - uses: actions/checkout@v6
+      # build-data.sh reads only the last 24 h of history/<slug>.yml commits, so deepen the default
+      # depth-1 checkout to 2 days instead of cloning the whole bot-commit history (fetch-depth: 0).
+      - name: Fetch last 2 days of history
+        # AUDIT-DECISION(AUD-STAT-5ae9d7fd): 2-day margin keeps the shallow boundary outside the 24 h window;
+        # if no commit is that recent git refuses, and depth 1 already holds every commit the window needs.
+        run: git fetch --no-tags --shallow-since="2 days ago" origin "$GITHUB_REF_NAME" || echo "::warning::shallow-since fetch failed; building from depth-1 checkout"
       - name: Build data.json
         env:
           GH_TOKEN: ${{ github.token }}
