@@ -1,0 +1,26 @@
+# Dependabot version updates for the status monitor (AUD-INFRA-45db7e76): vulnerability-management evidence.
+# The repo has no package manifest (Upptime runs as GitHub Actions), so github-actions is the only ecosystem.
+# AUDIT-DECISION(AUD-INFRA-45db7e76): no target-branch, so PRs go to the default branch (master);
+# workflows are pinned and committed by hand (.upptimerc.yml), so Dependabot is the only bump path.
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      timezone: "Asia/Kolkata"
+    open-pull-requests-limit: 3
+    labels:
+      - "dependencies"
+    commit-message:
+      prefix: "chore(deps)"
+    # AUDIT-DECISION(AUD-INFRA-45db7e76): upptime/uptime-monitor gets its own PR (owner pinned it on purpose);
+    # GitHub's own actions are grouped into one weekly PR to keep review load low.
+    groups:
+      upptime:
+        patterns:
+          - "upptime/*"
+      github-actions:
+        patterns:
+          - "actions/*"
