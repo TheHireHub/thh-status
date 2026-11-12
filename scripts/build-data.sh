@@ -3,6 +3,7 @@
 #   history/summary.json   – per-site status, uptime %, dailyMinutesDown
 #   history/<slug>.yml     – git history gives a 24h response-time series
 #   GitHub issues (label "status") – the incident log
+#   last successful uptime.yml run – checkedAt, the probe clock behind "Last checked"
 # Runs inside pages.yml on ubuntu-latest (bash, jq, git, gh).
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -59,7 +60,16 @@ incidents=$(gh api "repos/$REPO/issues?labels=status&state=all&since=$since&per_
       labels: [.labels[].name], body: (.body // "")
     }]' 2>/dev/null || echo '[]')
 
+# --- probe clock: when uptime.yml last finished a successful check ----------
+# AUDIT-DECISION(AUD-STAT-a3346cb0): history/<slug>.yml lastUpdated only moves on status/response changes, so it is no
+# probe clock; the last successful uptime.yml run is. Failure -> null (page falls back to generatedAt).
+checked_at=$(gh api "repos/$REPO/actions/workflows/uptime.yml/runs?status=success&per_page=1" \
+  --jq '.workflow_runs[0].updated_at // empty' 2>/dev/null || true)
+[ -n "$checked_at" ] || echo "::warning::could not read the last successful uptime.yml run; checkedAt=null"
+
 jq -n --argjson sites "$sites_json" --argjson incidents "$incidents" \
-  --arg generatedAt "$(date -u -d "@$NOW" +%FT%TZ)" \
-  '{generatedAt:$generatedAt, sites:$sites, incidents:$incidents}' > site/data.json
+  --arg generatedAt "$(date -u -d "@$NOW" +%FT%TZ)" --arg checkedAt "$checked_at" \
+  '{generatedAt:$generatedAt,
+    checkedAt:(if ($checkedAt | test("^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9:]{8}")) then $checkedAt else null end),
+    sites:$sites, incidents:$incidents}' > site/data.json
 echo "wrote site/data.json ($(jq '.sites|length' site/data.json) sites, $(jq '.incidents|length' site/data.json) incidents)"

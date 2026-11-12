@@ -15,16 +15,22 @@ on:
   issues:
     types: [opened, edited, closed, reopened, labeled]
   workflow_dispatch:
+# AUDIT-DECISION(AUD-STAT-242bfe5b): issue events without a status/maintenance label get a throwaway group, so public
+# issue spam can neither cancel nor replace a queued real deploy; real runs queue (no cancel-in-progress).
 concurrency:
-  group: pages
-  cancel-in-progress: true
+  group: ${{ (github.event_name != 'issues' || contains(github.event.issue.labels.*.name, 'status') || contains(github.event.issue.labels.*.name, 'maintenance')) && 'pages' || format('pages-ignored-{0}', github.run_id) }}
+  cancel-in-progress: false
 permissions:
+  # AUDIT-DECISION(AUD-STAT-a3346cb0): actions: read lets build-data.sh read the last successful uptime.yml run (probe clock).
+  actions: read
   contents: read
   issues: read
   pages: write
   id-token: write
 jobs:
   build:
+    # Same label filter as the concurrency group: unlabelled issue activity builds and deploys nothing.
+    if: github.event_name != 'issues' || contains(github.event.issue.labels.*.name, 'status') || contains(github.event.issue.labels.*.name, 'maintenance')
     runs-on: ubuntu-latest
     steps:
       # AUDIT-DECISION(AUD-STAT-a9f1b6bd): checkout@v6 like the other workflows (node20 runtime retiring);

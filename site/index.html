@@ -182,7 +182,7 @@
     <div class="dot"><i></i></div>
     <div>
       <h1 id="headline">Checking TheHireHub services…</h1>
-      <p>Website, platform, API and media — checked every 5 minutes from outside our network.</p>
+      <p id="sub">Website, platform, API and media — checked every 5 minutes from outside our network.</p>
     </div>
     <div class="meta">Last checked<b id="last">—</b></div>
   </section>
@@ -235,12 +235,18 @@
 
   // banner
   const down=sites.filter(s=>s.status==="down").length, deg=sites.filter(s=>s.status==="degraded").length;
+  // AUDIT-DECISION(AUD-STAT-a3346cb0): 'Last checked' = last successful probe run (checkedAt), build time only as fallback;
+  // older than 30 min (5-min checks + GitHub cron delays) = monitoring or deploys stalled, so never show green.
+  const STALE_MS=30*60*1000, checked=data.checkedAt||data.generatedAt;
+  const stale=sites.length>0&&!(Date.now()-Date.parse(checked)<=STALE_MS);
   const b=$("#banner");
   if(down){b.classList.add("down");$("#headline").textContent=down===sites.length?"Major outage":`${down} service${down>1?"s":""} down`;}
   else if(deg){b.classList.add("warn");$("#headline").textContent="Degraded performance";}
+  else if(stale){b.classList.add("warn");$("#headline").textContent="Monitoring delayed";}
   else{$("#headline").textContent=sites.length?"All systems operational":"No data yet";}
+  if(stale)$("#sub").textContent="Our last check was more than 30 minutes ago, so this page may not show the current status.";
   document.title=($("#headline").textContent)+" — TheHireHub Status";
-  $("#last").textContent=data.generatedAt?fmt(data.generatedAt,{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"})+" IST":"—";
+  $("#last").textContent=checked?fmt(checked,{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"})+" IST":"—";
 
   // services
   $("#services").innerHTML=sites.map(s=>{const [cls,txt]=label(s);return `
