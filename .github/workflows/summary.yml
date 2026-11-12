@@ -26,10 +26,15 @@ on:
 concurrency:
   group: ${{ github.repository }}-${{ github.head_ref || github.ref_name }}-upptime
   cancel-in-progress: false
+# AUDIT-DECISION(AUD-STAT-0a3095fe): github.token may only commit README/summary.json (+ read issues); 10 min timeout.
+permissions:
+  contents: write
+  issues: read
 jobs:
   release:
     name: Generate README
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     env:
       GH_APP_PRIVATE_KEY: ${{ secrets.GH_APP_PRIVATE_KEY }}
     steps:

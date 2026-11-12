@@ -24,10 +24,16 @@ on:
 concurrency:
   group: ${{ github.repository }}-${{ github.head_ref || github.ref_name }}-upptime
   cancel-in-progress: false
+# AUDIT-DECISION(AUD-STAT-0a3095fe): least privilege for github.token: Upptime commits history/ and opens/closes
+# incident issues; 10 min timeout (a run takes ~1 min) instead of the 6 h default.
+permissions:
+  contents: write
+  issues: write
 jobs:
   release:
     name: Check status
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     env:
       GH_APP_PRIVATE_KEY: ${{ secrets.GH_APP_PRIVATE_KEY }}
     steps:
@@ -47,6 +53,8 @@ jobs:
         with:
           ref: ${{ github.head_ref || github.ref_name }}
           token: ${{ steps.app_token.outputs.token || secrets.GH_PAT || github.token }}
+      # AUDIT-QUESTION(AUD-STAT-0a3095fe): pin this and create-github-app-token to full commit SHAs? Needs a GitHub
+      # lookup this offline run cannot do; took the tags (owner step in commit W7-2997; Dependabot keeps SHA pins current).
       - name: Check endpoint status
         uses: upptime/uptime-monitor@v1.44.0
         with:
